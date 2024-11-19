@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upcoming Tests</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="navstyle.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" 
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+   
+</head>
+<body>
+    <!-- Header with toggle button -->
+    <div class="header">
+        <button class="toggle-btn" id="toggle-btn" onclick="toggleSidebar()">☰</button>
+        <h1>ONLINE QUIZ</h1>
+
+        <!-- Login button with dropdown -->
+        <div class="login-container">
+            <button class="logout-btn">Login</button>
+            <div class="dropdown-content">
+                <a href="login.php">Login</a>
+                <a href="register.php">Register</a>
+                <a href="help.php">Help</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
+        <div class="admin-section">
+            <img src="./student.png" alt="Admin" class="admin-img" style="margin-top: 2rem;">
+            <h1 id="welcome-message">Welcome User!</h1>
+        </div>
+        <ul class="sidebar-elements">
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="testlayout.html">Test</a></li>
+            <li><a href="upcoming_test.html">upcoming test</a></li>
+            <li><a href="generate_test.html">generate test</a></li>
+            <li><a href="generate_upcoming_test.html">generate upcoming test</a></li>
+        </ul>
+    </div>
+
+    <!-- Main content -->
+    <h1>Upcoming Tests</h1>
+    <div id="upcomingTests"></div>
+
+    <script src="script.js"></script>
+    <footer style="display: flex; justify-content: center;">
+        <div class="footer">
+            <p>&copy; 2024 Your Website Name. All rights reserved.</p>
+            <p>
+                <a href="privacy-policy.html">Privacy Policy</a> | 
+                <a href="terms-of-service.html">Terms of Service</a> | 
+                <a href="contact.html">Contact Us</a>
+            </p>
+        </div>
+    </footer>
+    <script>
+         fetch('get_user_name.php')
+            .then(response => response.json())
+            .then(data => {
+                const userOptions = document.getElementById('user-options');
+
+                // If the user is logged in
+                if (data.name) {
+                    document.getElementById('welcome-message').innerText = `Welcome, ${data.name}!`;
+
+                    // Show Username and Logout options
+                    userOptions.innerHTML = `
+                        <a href="#">${data.name}</a>
+                        <a href="logout.php">Logout</a>
+                    `;
+                } else {
+                    // If not logged in, show Username placeholder and Login option
+                    userOptions.innerHTML = `
+                        <a href="#">USER</a>
+                        <a href="index.php">Login</a>
+                    `;
+                }
+            })
+            .catch(error => console.log('Error:', error));
+
+            function loadUpcomingTests() {
+            const tests = JSON.parse(localStorage.getItem('upcomingTests'));
+            const upcomingTestsDiv = document.getElementById('upcomingTests');
+
+            if (tests && tests.length > 0) {
+                tests.forEach((test, index) => {
+                    upcomingTestsDiv.innerHTML += `
+                        <h3>Subject ${index + 1}</h3>
+                        <p>Subject Name: ${test.subjectName}</p>
+                        <p>Date: ${test.subjectDate}</p>
+                        <p>Time: ${test.subjectTime}</p>
+                    `;
+                });
+            } else {
+                upcomingTestsDiv.innerHTML = '<p>No upcoming tests available.</p>';
+            }
+        }
+
+        window.onload = loadUpcomingTests;
+    </script>
+</body>
+</html>
